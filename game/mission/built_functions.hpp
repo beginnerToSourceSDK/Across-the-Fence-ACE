@@ -258,8 +258,11 @@ class vgm_g
         class loc_getTargetBoxMarker {};
     };
 
-    /*class medical
+    class medical
     {
+        #if __has_include("\z\ace\addons\main\script_component.hpp")
+
+        #else
         VGM_GLOBAL_PATH(\systems\medical\global);
 
         class medical_isUnconscious {};
@@ -268,7 +271,8 @@ class vgm_g
             postInit = 1;
         };
         class medical_replaceItems {};
-    };*/
+        #endif
+    };
 
     class mission_objects
     {
@@ -731,8 +735,13 @@ class vgm_c
         };
     };
 
-    /*class medical
+    class medical
     {
+        #if __has_include("\z\ace\addons\main\script_component.hpp")
+
+        #else
+
+
         VGM_CLIENT_PATH(\systems\medical\client);
 
         class medical_addAction {};
@@ -764,24 +773,34 @@ class vgm_c
         class medical_statusEffectBleeding {};
         class medical_unitInit {};
         class medical_updateVisuals {};
-    };*/
 
-    /*class medical_feedback
+        #endif
+    };
+
+    class medical_feedback
     {
+        #if __has_include("\z\ace\addons\main\script_component.hpp")
+
+        #else
         VGM_CLIENT_PATH(\systems\medical\client\feedback);
 
         class medical_feedback_init {};
         class medical_feedbackBleeding {};
         class medical_feedbackHit {};
+        #endif
     };
 
     class medical_injury_effects
     {
+        #if __has_include("\z\ace\addons\main\script_component.hpp")
+
+        #else
         VGM_CLIENT_PATH(\systems\medical\client\injuryEffects);
 
         class medical_injuryEffects_init {};
         class medical_injuryEffectsUpdate {};
-    };*/
+        #endif
+    };
 
     class respawn
     {
