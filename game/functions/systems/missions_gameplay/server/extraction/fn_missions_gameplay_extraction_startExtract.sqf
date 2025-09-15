@@ -92,12 +92,23 @@ private _script = [_missionId, _mission, _helicopter, _helipad] spawn {
     params ["_missionId", "_mission", "_helicopter", "_helipad"];
     private _playerGroup = _mission get "public" get "group";
     waitUntil {
-        private _alivePlayers = units _playerGroup select {alive _x && !(_x call vgm_g_fnc_medical_isUnconscious)};
-        private _everyoneBoarded = _alivePlayers findIf {!(_x in _helicopter)} == -1 && _alivePlayers isNotEqualTo [];
-        private _leaveNow = _helicopter getVariable ["vgm_missions_extraction_evacNow", false];
-        private _leaveAtTime = _helicopter getVariable ["vgm_missions_extraction_evacAt", -1];
+		if (fileExists "\z\ace\addons\main\script_component.hpp") then
+		{
+			private _alivePlayers = units _playerGroup select {alive _x};
+			private _everyoneBoarded = _alivePlayers findIf {!(_x in _helicopter)} == -1 && _alivePlayers isNotEqualTo [];
+			private _leaveNow = _helicopter getVariable ["vgm_missions_extraction_evacNow", false];
+			private _leaveAtTime = _helicopter getVariable ["vgm_missions_extraction_evacAt", -1];
 
-        _everyoneBoarded || _leaveNow || (_leaveAtTime isNotEqualTo -1 && serverTime > _leaveAtTime);
+			_everyoneBoarded || _leaveNow || (_leaveAtTime isNotEqualTo -1 && serverTime > _leaveAtTime);
+		} else {;
+			private _alivePlayers = units _playerGroup select {alive _x && !(_x call vgm_g_fnc_medical_isUnconscious)};
+			private _alivePlayers = units _playerGroup select {alive _x};
+			private _everyoneBoarded = _alivePlayers findIf {!(_x in _helicopter)} == -1 && _alivePlayers isNotEqualTo [];
+			private _leaveNow = _helicopter getVariable ["vgm_missions_extraction_evacNow", false];
+			private _leaveAtTime = _helicopter getVariable ["vgm_missions_extraction_evacAt", -1];
+
+			_everyoneBoarded || _leaveNow || (_leaveAtTime isNotEqualTo -1 && serverTime > _leaveAtTime);
+		};
     };
 
     _helicopter setVariable ["vgm_missions_extractionBoarded", true];
