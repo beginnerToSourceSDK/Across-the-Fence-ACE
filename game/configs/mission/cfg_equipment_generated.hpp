@@ -121,7 +121,31 @@ class default {
         "vn_b_item_toolkit_weightless",
         "vn_b_item_radio_urc10",
         "vn_s_m45",
-        "vn_s_m1911"
+        "vn_s_m1911",
+        // ACE items below
+        "ACE_painkillers",
+        "ACE_plasmaIV_250",
+        "ACE_plasmaIV_500",
+        "ACE_plasmaIV",
+        "ACE_fieldDressing",
+        "ACE_elasticBandage",
+        "ACE_packingBandage",
+        "ACE_tourniquet",
+        "ACE_splint",
+        "ACE_morphine",
+        "ACE_epinephrine", 
+        "SOG_ACE_Items_ammoniaAmpule", 
+        "SOG_ACE_Items_Sulfa",
+        "ACE_MapTools", 
+        "ACE_Clacker", 
+        "SOG_ACE_Items_EntrenchingTool_m51", 
+        "ACE_EntrenchingTool", 
+        "ACE_SpraypaintYellow", 
+        "ACE_SpraypaintWhite", 
+        "ACE_SpraypaintRed", 
+        "ACE_SpraypaintGreen", 
+        "ACE_SpraypaintBlue",
+        "ACE_SpraypaintBlack"
     };
 };
 
