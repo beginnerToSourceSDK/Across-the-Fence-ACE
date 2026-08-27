@@ -29,8 +29,23 @@ class vgm_welcome {
     };
 };
 
-class vgm {
+class vgm_changelog {
     logicalOrder = 2;
+    displayName = "$STR_VGM_FIELD_MANUAL_VGM_CHANGELOG";
+    class changelog_0_11_0 {
+        displayName = "$STR_VGM_FIELD_MANUAL_CHANGELOG_0_11_0";
+        description = "$STR_VGM_FIELD_MANUAL_CHANGELOG_0_11_0_DESC";
+        logicalOrder = 1;
+    };
+    class changelog_0_12_0 {
+        displayName = "$STR_VGM_FIELD_MANUAL_CHANGELOG_0_12_0";
+        description = "$STR_VGM_FIELD_MANUAL_CHANGELOG_0_12_0_DESC";
+        logicalOrder = 2;
+    };
+};
+
+class vgm {
+    logicalOrder = 3;
     displayName = "$STR_VGM_MISSION_NAME";
     class missions {
         displayName = "$STR_VGM_FIELD_MANUAL_MISSIONS";
@@ -122,7 +137,7 @@ class vgm {
 };
 
 class vgm_missions {
-    logicalOrder = 3;
+    logicalOrder = 4;
     displayName = __EVAL(format [localize 'STR_VGM_FIELD_MANUAL_VGM_MISSIONS', localize 'STR_VGM_MISSION_NAME']);
     class stealth {
         displayName = "$STR_VGM_FIELD_MANUAL_STEALTH";

@@ -133,6 +133,9 @@
         <Key ID="STR_VGM_MEDICAL_UI_NOTIFICATION_MISSING_ITEMS">
             <Original>Missing required items!</Original>
         </Key>
+        <Key ID="STR_VGM_MEDICAL_UI_NOTIFICATION_CARRYING_OBJECT">
+            <Original>Cannot heal while carrying an object!</Original>
+        </Key>
         <!-- body parts -->
         <Key ID="STR_VGM_MEDICAL_UI_BODY_PART_HEAD">
             <Original>Head</Original>
@@ -519,7 +522,7 @@
             <Original>Taking notes</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_TAKING_NOTES_DESC">
-            <Original>Inspected glints are marked on the map for the team</Original>
+            <Original>Inspected clues are marked on the map for the team</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_HANDRAIL">
             <Original>Handrail</Original>
@@ -617,6 +620,9 @@
         <Key ID="STR_VGM_SKILLS_SKILL_FIRE_DIRECTION">
             <Original>Fire direction</Original>
         </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_FIRE_DIRECTION_ACTION">
+            <Original>Point at location</Original>
+        </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_FIRE_DIRECTION_DESC">
             <Original>Enables marking a location for other team mates in the HUD.</Original>
         </Key>
@@ -630,7 +636,10 @@
             <Original>Kick-off time</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_KICKOFF_TIME_DESC">
-            <Original>If no teams are deployed, call a vote on time-of-day (all players):\n- DAY(0800)\n- NIGHT(1800)</Original>
+            <Original>If no teams are deployed, call a vote on time of day (all players):\n- DAY(0800)\n- NIGHT(1800)</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_KICKOFF_TIME_ACTION">
+            <Original>Vote on time of day</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_ROLL_CALL">
             <Original>Roll call</Original>
@@ -638,11 +647,11 @@
         <Key ID="STR_VGM_SKILLS_SKILL_ROLL_CALL_DESC">
             <Original>All team members show up on each team member's map.</Original>
         </Key>
-        <Key ID="STR_VGM_SKILLS_SKILL_MAD_MINUTE">
-            <Original>Mad minute</Original>
+        <Key ID="STR_VGM_SKILLS_SKILL_EMERGENCY_STASH">
+            <Original>Emergency stash</Original>
         </Key>
-        <Key ID="STR_VGM_SKILLS_SKILL_MAD_MINUTE_DESC">
-            <Original>All team members consume no ammo.</Original>
+        <Key ID="STR_VGM_SKILLS_SKILL_EMERGENCY_STASH_DESC">
+            <Original>All team members can reload without consuming ammo from their inventory.</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_TARGET_FOLDER_2">
             <Original>Target folder 2</Original>
@@ -655,6 +664,36 @@
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_DESC">
             <Original>Request covey give you the azimuth and distance to your nearest LZ, and adds a marker on the map.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_ACTION">
+            <Original>Locate nearest LZ</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_NEARBY">
+            <Original>You're right on top of it, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_N">
+            <Original>The nearest LZ looks to be roughly %1 metres north of your position, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_NE">
+            <Original>The nearest LZ looks to be roughly %1 metres north-east of your position, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_E">
+            <Original>The nearest LZ looks to be roughly %1 metres east of your position, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_SE">
+            <Original>The nearest LZ looks to be roughly %1 metres south-east of your position, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_S">
+            <Original>The nearest LZ looks to be roughly %1 metres south of your position, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_SW">
+            <Original>The nearest LZ looks to be roughly %1 metres south-west of your position, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_W">
+            <Original>The nearest LZ looks to be roughly %1 metres west of your position, covey out.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_SANCTUARY_RESPONSE_NW">
+            <Original>The nearest LZ looks to be roughly %1 metres north-west of your position, covey out.</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_DITCH_RUCKS">
             <Original>Ditch rucks</Original>
@@ -672,7 +711,7 @@
             <Original>Break contact</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_BREAK_CONTACT_DESC">
-            <Original>Briefly distracts the enemy from all team members.</Original>
+            <Original>Briefly distracts the enemy from all team members, giving them an opportunity to hide and break contact</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_GET_TO_THE_LZ">
             <Original>Get to the LZ</Original>
@@ -718,6 +757,15 @@
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_RALLY_POINT">
             <Original>Rally point</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_RALLY_POINT_ACTION">
+            <Original>Set / clear rally point</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_RALLY_POINT_SET">
+            <Original>Rally point set</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_RALLY_POINT_CLEARED">
+            <Original>Rally point cleared</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_RALLY_POINT_DESC">
             <Original>Enables setting a nearby team rally point on the map. Team members engaging in a desperate escape start within 250m of it.</Original>
@@ -881,6 +929,9 @@
         <Key ID="STR_VGM_SKILLS_SKILL_LEG_POCKETS">
             <Original>Leg pockets</Original>
         </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_LEG_POCKETS_ACTIVATED">
+            <Original>2 extra first aid kits have been retrieved from your leg pockets.</Original>
+        </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_LEG_POCKETS_DESC">
             <Original>When the last first aid kit is used, gain 2 more.</Original>
         </Key>
@@ -894,7 +945,10 @@
             <Original>Tourniquet</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_TOURNIQUET_DESC">
-            <Original>Instantly stops bleeding on a player. Any new injuries will restart the bleeding.</Original>
+            <Original>Instantly stops bleeding on a teammate or yourself. Any new injuries will restart the bleeding.</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_TOURNIQUET_UNABLE_TO_APPLY">
+            <Original>Target is not bleeding!</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_BLACK_KNIGHT">
             <Original>Black knight</Original>
@@ -912,7 +966,7 @@
             <Original>He ain't heavy</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_HE_AINT_HEAVY_DESC">
-            <Original>Enable sprinting while carrying a downed teammate.</Original>
+            <Original>Increases your movement speed while carrying a downed person.</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_GREEN_HORNET">
             <Original>Green hornet</Original>
@@ -956,6 +1010,9 @@
         <Key ID="STR_VGM_SKILLS_SKILL_ITS_ONLY_A_FLESH_WOUND_DESC">
             <Original>Completely heal the person you're looking at.</Original>
         </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_ITS_ONLY_A_FLESH_WOUND_UNABLE_TO_APPLY">
+            <Original>Target is not wounded!</Original>
+        </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_SWEET_DREAMS">
             <Original>Sweet dreams</Original>
         </Key>
@@ -975,6 +1032,9 @@
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_PLAYING_POSSUM">
             <Original>Playing possum</Original>
+        </Key>
+        <Key ID="STR_VGM_SKILLS_SKILL_PLAYING_POSSUM_ACTIVATED">
+            <Original>Playing possum activated</Original>
         </Key>
         <Key ID="STR_VGM_SKILLS_SKILL_PLAYING_POSSUM_DESC">
             <Original>Immediately get back up when the whole team is downed. Once per mission.</Original>
@@ -1307,7 +1367,43 @@
             <Original>Waystation</Original>
         </Key>
     </Package>
-    <Package name="Missions Extraction">
+    <Package name="Missions creation">
+        <Key ID="STR_VGM_MISSIONS_CREATION_CREATED">
+            <Original>Mission created</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_CREATION_CREATED_DETAILS">
+            <Original>Created new mission %1</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_CREATION_NO_ZONES_FREE">
+            <Original>Couldn't create a new mission: all target boxes are currently in use</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_CREATION_ZONE_RESERVATION_FAILED">
+            <Original>Couldn't reserve target box %1 for mission - all target boxes are occupied</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_CREATION_UNKNOWN_ERROR">
+            <Original>Mission creation failed for unexpected reason %1</Original>
+        </Key>
+    </Package>
+    <Package name="Missions join">
+        <Key ID="STR_VGM_MISSIONS_JOINED">
+            <Original>Mission joined</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_JOINED_DETAILS">
+            <Original>Joined %1's mission</Original>
+        </Key>
+    </Package>
+    <Package name="Missions start">
+        <Key ID="STR_VGM_MISSIONS_START_FAILED">
+            <Original>Couldn't start mission</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_START_FAILED_CODE_MISSION_DOES_NOT_EXIST">
+            <Original>Mission does not exist</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_START_FAILED_CODE_MISSION_RUNNING">
+            <Original>Mission has already started</Original>
+        </Key>
+    </Package>
+    <Package name="Missions extraction">
         <Key ID="STR_VGM_MISSIONS_EXTRACTION_REQUEST_ACTION">
             <Original>Request extraction</Original>
         </Key>
@@ -1348,7 +1444,7 @@
             <English>Extract helicopter leaving in 30 seconds!</English>
         </Key>
     </Package>
-    <Package name="Missions Scouting">
+    <Package name="Missions scouting">
         <!-- Notification titles -->
         <Key ID="STR_VGM_MISSIONS_SCOUTING_NOTIFICATION_SITE_EDITED_TITLE">
             <Original>SITE EDITED</Original>
@@ -1455,7 +1551,7 @@
             <Original>Skills</Original>
         </Key>
         <Key ID="STR_VGM_FIELD_MANUAL_SKILLS_DESC">
-            <Original>Skills are grouped into four main archetypes, %3Rifleman%4, %3Recon%4, %3Fire Support%4 and %3Support%4.%1You can mix skills from all archetypes, creating your own specialized MACV-SOG character.%1%1You can access %3Skills menu%4 at the %3Radio%4. To learn skills you need %3Skill Points (SP)%4, which are gained by leveling up. To level up, you need to gather experience by running missions.%1%1There's two types of skills:%1%2 Passives - have passive effect on your character, affecting you all the time, do not need an activation%1%2 Abilities - need to be equipped in %3Abilities%4 menu at the %3Radio%4, they have short term effects once activated via %3Skill Wheel%4. There's two subtypes of abilities:%1    %2 Standard Abilities - offer a small benefit and are intended to be used frequently throughout the mission%1    %2 Ultimate Abilities - offer a large benefit and are intended to be used at critical moments during the mission%1%1&lt;t size="1.25"&gt;Skill wheel&lt;/t&gt;%1To use one of the skills assigned in the %3Abilities%4 menu, press %3"%11"%4 and select it from the %3Skill wheel%4</Original>
+            <Original>Skills are grouped into four main archetypes, %3Rifleman%4, %3Recon%4, %3Fire Support%4 and %3Support%4.%1You can mix skills from all archetypes, creating your own specialized MACV-SOG character.%1%1You can access %3Skills menu%4 at the %3Radio%4. To learn skills you need %3Skill Points (SP)%4, which are gained by leveling up. To level up, you need to gather experience by running missions.%1%1There's two types of skills:%1%2 Passives - have passive effect on your character, affecting you all the time, do not need an activation%1%2 Abilities - need to be equipped in %3Abilities%4 menu at the %3Radio%4, they have short term effects once activated via %3Skill Wheel%4. There's two subtypes of abilities:%1    %2 Standard Abilities - offer a small benefit and are intended to be used frequently throughout the mission%1    %2 Ultimate Abilities - offer a large benefit and are intended to be used at critical moments during the mission%1%1&lt;t size="1.25"&gt;Skill wheel&lt;/t&gt;%1To use one of the skills assigned in the %3Abilities%4 menu, press %3`%4 (Grave / Backtick / Backquote) and select it from the %3Skill wheel%4</Original>
         </Key>
         <Key ID="STR_VGM_FIELD_MANUAL_SKILLS_TIP">
             <Original>Recon teams were skilled warriors, training for the next mission.</Original>
@@ -1556,6 +1652,21 @@
         <Key ID="STR_VGM_FIELD_MANUAL_DESPERATE_ESCAPE_HINT_DESPERATE_ESCAPE_DESCRIPTION">
             <Original>When downed, once per mission you can conduct a desperate escape to get to safety. You'll lose your backback and some other items.</Original>
         </Key>
+        <Key ID="STR_VGM_FIELD_MANUAL_VGM_CHANGELOG">
+            <Original>Changelog</Original>
+        </Key>
+        <Key ID="STR_VGM_FIELD_MANUAL_CHANGELOG_0_11_0">
+            <Original>v0.11.0</Original>
+        </Key>
+        <Key ID="STR_VGM_FIELD_MANUAL_CHANGELOG_0_11_0_DESC">
+            <Original>%3ADDED:%4%1%2 Added zombie gamemode variant (requires [Zombies and Demons - S.O.G. Prairie Fire compatibility mod])%1%1%3CHANGED:%4%1%2 Reworked the grenadier and scout weapon specialisms to better align with other trees%1%2 Reduced noise radii for gunshots%1%2 Rebalanced noise radii and alertness for explosions, to better align with the size of the "bang"%1%2 Overhauled enemy reinforcement scaling to avoid rapid, deadly escalation%1%1%3FIXED:%4%1%2 Fixed skill and level progress being lost in some instances when using profile storage (default)%1%2 Fixed skills being unlearnable in some instances when LAN hosting%1%2 Fixed several items being unavailable in the Arsenal%1%2 Fixed TFAR radios being filtered out by the Arsenal%1%2 Fixed skill wheel keybinding showing as 'anyanyany' in the Field Manual%1%2 Rewords 'Taking Notes' skill description - Thanks @FateTheTitan%1%2 Players no longer turn into AI on disconnect%1%2 Deletes helicopter on mission failure%1%2 Made the extraction helicopter land more intelligently, avoiding it being too high or low%1%2 Fixed multiple issues with broken equipment unlocks%1%2 Fixed reinforcements double-scaling with player count%1%2 Fixed site locations on Dong Giang, The Bra and Khe Sanh%1%2 Fixed level info not being show when the player first joins%1%2 Fixed players having 4 skill points (instead of 3) when they first join%1%2 Prevents mission creation falsely failing with "Zone reservation failed" message</Original>
+        </Key>
+        <Key ID="STR_VGM_FIELD_MANUAL_CHANGELOG_0_12_0">
+            <Original>v0.12.0</Original>
+        </Key>
+        <Key ID="STR_VGM_FIELD_MANUAL_CHANGELOG_0_12_0_DESC">
+            <Original>%3ADDED:%4%1%2 Added support for Rung Sat Special Zone%1%2 Added team leader skill tree (beta - some skills omitted)%1%1%3CHANGED:%4%1%2 "One of them" now works with the recon helmet given by "Friend or foe"</Original>
+        </Key>
     </Package>
     <Package name="Tutorial">
         <Key ID="STR_VGM_TUTORIAL_UI_ACKNOWLEDGE_HINT">
@@ -1590,6 +1701,144 @@
         </Key>
         <Key ID="STR_VGM_PARAMS_ENABLE_LEVEL_SKIP">
             <Original>Enables an object near the TOC allowing players to skip to level 5</Original>
+        </Key>
+        <Key ID="STR_VGM_PARAMS_TUTORIAL_DISABLE">
+            <Original>Disable tutorial hints?</Original>
+        </Key>
+    </Package>
+    <Package name="Paradigm Voting Menu">
+        <Key ID="STR_PARA_VOTEMENU_SUBMIT_VOTE">
+            <Original>Submit vote</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_SELECT_OPTION">
+            <Original>Please select an option:</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_VOTE_INIT_BODY">
+            <Original>A vote has been initalized. For more details please open the menu.</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_OPEN">
+            <Original>Open</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_CASTED">
+            <Original>Vote cast</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_VOTED_FOR">
+            <Original>You voted:</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_SELECT_OPTION_PROMPT">
+            <Original>You must select an option!</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_OPTION_1">
+            <Original>Vote option 1</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_OPTION_2">
+            <Original>Vote option 2</Original>
+        </Key>
+        <Key ID="STR_PARA_VOTEMENU_OPTION_3">
+            <Original>Open voting menu</Original>
+        </Key>
+    </Package>
+    <Package name="Time of day voting">
+        <Key ID="STR_VGM_TIME_OF_DAY_VOTING_CANT_START_VOTE">
+            <Original>Couldn't start vote</Original>
+        </Key>
+        <Key ID="STR_VGM_TIME_OF_DAY_VOTING_FAILURE_CODE_VOTE_CALLED_RECENTLY">
+            <Original>A vote to wait occurred recently, you can vote again in %1 minutes</Original>
+        </Key>
+        <Key ID="STR_VGM_TIME_OF_DAY_VOTING_FAILURE_CODE_MISSION_IN_PROGRESS">
+            <Original>You can't vote to wait while a team is running a mission</Original>
+        </Key>
+        <Key ID="STR_VGM_MISSIONS_START_FAILED_CODE_TIME_OF_DAY_VOTE_IN_PROGRESS">
+            <Original>Missions can't be started until the wait vote has finished.</Original>
+        </Key>
+        <Key ID="STR_VGM_TIME_OF_DAY_VOTING_PREMISSION_VOTE_TITLE">
+            <Original>Wait vote</Original>
+        </Key>
+        <Key ID="STR_VGM_TIME_OF_DAY_VOTING_PREMISSION_VOTE_CONTENT">
+            <Original>What time should the teams wait until?</Original>
+        </Key>
+        <Key ID="STR_VGM_TIME_OF_DAY_VOTING_PREMISSION_VOTE_OPTION_1">
+            <Original>Morning (08:00)</Original>
+        </Key>
+        <Key ID="STR_VGM_TIME_OF_DAY_VOTING_PREMISSION_VOTE_OPTION_2">
+            <Original>Evening (18:00)</Original>
+        </Key>
+    </Package>
+    <Package name="RTO">
+        <Key ID="STR_VGM_RTO_NO_AIRCRAFT_ON_STATION">
+            <Original>No aircraft on-station</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_X_AIRCRAFT_ON_STATION">
+            <Original>%1 aircraft on-station</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_AIRCRAFT_ENROUTE">
+            <Original>%1 (arrives in %2m)</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_AIRCRAFT_ON_STATION">
+            <Original>%1 (departs in %2m)</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_NAME_WITH_STATUS">
+            <Original>[%2] %1</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_AIR_LIST_STATUS_REFUELING">
+            <Original>[R]EFUELING - %1</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_AIR_LIST_STATUS_STANDBY">
+            <Original>[S]TANDBY</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_AIR_LIST_STATUS_ENROUTE">
+            <Original>[E]NROUTE - %1</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_AIR_LIST_STATUS_ONSTATION">
+            <Original>[O]N STATION - %1</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_AIR_LIST_STATUS_DEPARTED">
+            <Original>[D]EPARTED</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_CALL">
+            <Original>Call on-station</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_ARRIVES_IN">
+            <Original>Arrives in %1</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_ENROUTE">
+            <Original>Aircraft en-route</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_ON_ATTACK_RUN">
+            <Original>Aircraft on attack run</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_REMAINING">
+            <Original>%1 remaining</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_DISMISS">
+            <Original>Return to base</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_TOO_MANY_AIRCRAFT_IN_USE">
+            <Original>The maximum number of aircraft are in use</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_EXTRA_ARRIVAL_TIME">
+            <Original>&lt;t size='1.2'&gt;%1 modifier to arrival time&lt;/t&gt;&lt;br/&gt;Reasons: %2</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_NO_EXTRA_ARRIVAL_TIME">
+            <Original>&lt;t size='1'&gt;No modifier to arrival time&lt;/t&gt;</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_REASON_HANDHELD">
+            <Original>Using survival radio</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_REASON_NIGHT">
+            <Original>Night</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_REASON_WEATHER">
+            <Original>Weather</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_STRIKE_DESCRIPTION">
+            <Original>&lt;t size='1.2'&gt;%1 extra delay before strike&lt;/t&gt;&lt;br/&gt;Reasons: %2</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_NO_STRIKE_DELAY">
+            <Original>&lt;t size='1'&gt;No extra delay before strike&lt;/t&gt;</Original>
+        </Key>
+        <Key ID="STR_VGM_RTO_NONE">
+            <Original>None</Original>
         </Key>
     </Package>
 </Project>

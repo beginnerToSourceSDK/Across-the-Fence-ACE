@@ -16,16 +16,22 @@ class vgm_g
 
         class enemySides {};
         class execNextFrame {};
+        class fastSum {
+            headerType = -1;
+        };
+        class formatDuration {};
         class itemConfig {};
         class itemType {};
         class manWouldCollideAtPosition {};
         class objectArea {};
         class nearestPointOnLine {};
+        class nearestPosition {};
         class preInit
         {
             preInit = 1;
         };
         class randomPosInRing {};
+        class removeMagazineAmmo {};
         class spokenDirection {};
         class startScheduler {
             postInit = 1;
@@ -263,6 +269,7 @@ class vgm_g
         VGM_GLOBAL_PATH(\systems\medical\global);
 
         class medical_isUnconscious {};
+        class medical_isWounded {};
         class medical_postInit
         {
             postInit = 1;
@@ -300,6 +307,8 @@ class vgm_g
     {
         VGM_GLOBAL_PATH(\systems\missions_zones\global);
 
+        class missions_zones_getLzs {};
+        class missions_zones_getUnreservedZones {};
         class missions_zones_postInit
         {
             postInit = 1;
@@ -314,12 +323,32 @@ class vgm_g
         class objGrabber_map {};
     };
 
+    class rto
+    {
+        VGM_GLOBAL_PATH(\systems\rto\global);
+
+		class rto_getAircraftInUse {};
+		class rto_getAircraftStatus {};
+        class rto_getAircraftTimesForPlayer {};
+        class rto_getTimeModifiersForPlayer {};
+        class rto_isAircraftDeparted {};
+        class rto_isAircraftEnRoute {};
+        class rto_isAircraftOnAttackRun {};
+        class rto_isAircraftOnStation {};
+        class rto_isAircraftOnStandby {};
+        class rto_isAircraftRefueling {};
+        class rto_getUsableRadioType {};
+        class rto_preInit {
+            preInit = 1;
+        };
+    };
+
     class respawn
     {
         VGM_GLOBAL_PATH(\systems\respawn\global);
 
         class respawn_findSafeSpawnTransformNearTeam {};
-        class respawn_findFallbackSpawnTransform {};
+        class respawn_findSafeSpawnTransform {};
         class respawn_preInit {
             preInit = 1;
         };
@@ -334,7 +363,10 @@ class vgm_g
         class skills_canLearnWithReason {};
         class skills_canSee {};
         class skills_getByPath {};
+        class skills_getSkillCostForPlayer {};
         class skills_getSkillTreeFromSkill {};
+        class skills_getTreeDiscounts {};
+        class skills_getTreeSkillPointsMaxForPlayer {};
         class skills_getTreeSkillPoints {};
         class skills_getTreeSkillPointsBelowTier {};
         class skills_isKnown {};
@@ -380,6 +412,29 @@ class vgm_g
         class tracking_startRecordingTracks {};
         class tracking_stopRecordingTracks {};
         class tracking_trackRecordingJob {};
+    };
+
+    class zombie {
+        VGM_GLOBAL_PATH(\systems\zombie\global);
+
+        class zombie_ambientNoise {};
+        class zombie_attack {};
+        class zombie_canAttack {};
+        class zombie_canAttackTarget {};
+        class zombie_canSee {};
+        class zombie_chase {};
+        class zombie_clearChaseTarget {};
+        class zombie_hasChaseTarget {};
+        class zombie_init {};
+        class zombie_isValidTarget {};
+        class zombie_makeNoise {};
+        class zombie_nearestTarget {};
+        class zombie_onAttackEnd {};
+        class zombie_preInit {
+            preInit = 1;
+        };
+        class zombie_screamAlert {};
+        class zombie_setChaseTarget {};
     };
 };
 
@@ -465,6 +520,16 @@ class vgm_c
         class displayMenuBase {};
         class displayLoading {};
         class displayLevelIndicator {};
+        class displayRadioOperator {};
+    };
+
+    class groups
+    {
+        VGM_CLIENT_PATH(\core\client\groups);
+
+        class groups_postInit {
+            postInit = 1;
+        };
     };
 
     class artillery
@@ -548,6 +613,7 @@ class vgm_c
         class missions_highlightOrHideZone {};
         class missions_getCurrentMission {};
         class missions_getMissions {};
+        class missions_getTeamMembers {};
         class missions_makeMissionGiver {};
         class missions_preInit {
             preInit = 1;
@@ -671,6 +737,7 @@ class vgm_c
         class handle_light_level_loop {};
         class openFieldManual {};
         class update_loading_screen {};
+        class postNotification {};
         class progressBar {};
         class showTabbedTextDialog {};
         class stack_controls {};
@@ -679,6 +746,18 @@ class vgm_c
         {
             postInit = 1;
         };
+    };
+
+    class rto
+    {
+        VGM_CLIENT_PATH(\systems\rto\client);
+
+        class rto_addActions {};
+        class rto_postInit
+        {
+            postInit = 1;
+        };
+        class rto_removeActions {};
     };
 
     class shared_hub
@@ -779,8 +858,20 @@ class vgm_c
     {
         VGM_CLIENT_PATH(\systems\medical\client\injuryEffects);
 
+        class medical_injuryEffects_statusEffectImmunity {};
+
         class medical_injuryEffects_init {};
         class medical_injuryEffectsUpdate {};
+    };
+
+    class position_indicators
+    {
+        VGM_CLIENT_PATH(\systems\position_indicators\client);
+
+        class posIndicators_create {};
+        class posIndicators_preInit {
+            preInit = 1;
+        };
     };
 
     class respawn
@@ -807,6 +898,7 @@ class vgm_c
     {
         VGM_CLIENT_PATH(\systems\skills\client);
 
+        class skills_applyGroupSkill {};
         class skills_getSkillPoints {};
         class skills_openSkillTree {};
         class skills_postInit
@@ -817,21 +909,28 @@ class vgm_c
         {
             preInit = 1;
         };
+        class skills_setTreeDiscount {};
+        class skills_unapplyGroupSkill {};
+        class skills_unapplyPlayersGroupSkills {};
     };
 
     class skills_active
     {
         VGM_CLIENT_PATH(\systems\skills\client\active);
 
-        class skills_active_isSlotOnCooldown {};
-        class skills_active_getSlot {};
+        class skills_active_applyGroupSkill {};
         class skills_active_assignSkillToSlot {};
+        class skills_active_getSlot {};
+        class skills_active_getSlotSkill {};
+        class skills_active_init {};
+        class skills_active_isSlotActive {};
+        class skills_active_isSlotOnCooldown {};
         class skills_active_openAssignMenu {};
         class skills_active_openSkillWheel {};
+        class skills_active_resetSlotCooldown {};
         class skills_active_skillWheelActivate {};
         class skills_active_toggleHud {};
 
-        class skills_active_init {};
     };
 
     class skills_network
@@ -878,16 +977,36 @@ class vgm_c
         class skill_passives_friendOrFoe {};
         class skill_passives_senseOfScale {};
     };
-    class skill_passives_fireSupport
+    class skill_passives_medic
     {
-        VGM_CLIENT_PATH(\systems\skill\client\passives\fire_support);
+        VGM_CLIENT_PATH(\systems\skill\client\passives\medic);
 
+        class skill_passives_legPockets {};
+        class skill_passives_playingPossum {};
+    };
+    class skill_passives_rto
+    {
+        VGM_CLIENT_PATH(\systems\skill\client\passives\rto);
+
+        class skill_passives_addAircraft_preInit {
+            preInit = 1;
+        };
+        class skill_passives_addAircraft {};
     };
     class skill_passives_support
     {
         VGM_CLIENT_PATH(\systems\skill\client\passives\support);
+    };
+    class skill_passives_team_leader
+    {
+        VGM_CLIENT_PATH(\systems\skill\client\passives\team_leader);
 
-        class skill_passives_support_shepherd {};
+        class skill_passives_ditchRucks {};
+        class skill_passives_fireDirection {};
+        class skill_passives_kickOffTime_enableAction {};
+        class skill_passives_kickOffTime {};
+        class skill_passives_rallyPoint {};
+        class skill_passives_sanctuary {};
     };
 
     class skill_actives
@@ -924,12 +1043,22 @@ class vgm_c
         class skill_actives_stonesThrow {};
         class skill_actives_tacticalSense {};
     };
-    class skill_actives_support
-    {
-        VGM_CLIENT_PATH(\systems\skill\client\actives\support);
 
-        class skill_actives_support_getToTheLz {};
-        class skill_actives_support_quickBandage {};
+    class skill_actives_medic
+    {
+        VGM_CLIENT_PATH(\systems\skill\client\actives\medic);
+
+        class skill_actives_medic_itsOnlyAFleshWound {};
+        class skill_actives_medic_saltTablets {};
+        class skill_actives_medic_tourniquet {};
+    };
+
+    class skill_actives_team_leader
+    {
+        VGM_CLIENT_PATH(\systems\skill\client\actives\team_leader);
+
+        class skill_actives_getToTheLz {};
+        class skill_actives_oneTeam {};
     };
 
     class skill_investigate
@@ -947,6 +1076,7 @@ class vgm_c
             headerType = -1;
         };
         class skill_investigate_getSpeedDrawCoef {};
+        class skill_investigate_getUnitStateWaveColor {};
         class skill_investigate_getVoiceDrawCoef {};
         class skill_investigate_postInit
         {
@@ -964,6 +1094,14 @@ class vgm_c
         class skill_investigate_setFocusMode {};
         class skill_investigate_setListenMode {};
         class skill_investigate_toggleFocusMode {};
+    };
+
+
+    class spectator
+    {
+        VGM_CLIENT_PATH(\systems\spectator\client);
+
+        class spectator_toggle {};
     };
 
     class squad_ui
@@ -1030,6 +1168,16 @@ class vgm_c
         VGM_CLIENT_PATH(\systems\suppression\client);
 
         class suppression_preInit
+        {
+            preInit = 1;
+        };
+    };
+
+    class time_of_day_voting
+    {
+        VGM_CLIENT_PATH(\systems\time_of_day_voting\client);
+
+        class timeOfDayVote_preInit
         {
             preInit = 1;
         };

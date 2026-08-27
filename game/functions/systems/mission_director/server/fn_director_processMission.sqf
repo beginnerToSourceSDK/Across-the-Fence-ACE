@@ -2,7 +2,7 @@
     File: fn_director_processMission.sqf
     Author:
     Date: 2023-09-29
-    Last Update: 2025-08-30
+    Last Update: 2025-10-22
     Public: No
 
     Description:
@@ -25,7 +25,7 @@ private _directorData = _mission get "director";
 
 if (_publicMission get "status" == "FINISHED") exitWith {};
 
-private _missionPlayers = keys (_mission get "machineIds") apply { getUserInfo _x # 10 };
+private _missionPlayers = [_mission] call vgm_s_fnc_missions_getPlayers;
 
 private _alertness = _directorData get "alertness";
 
@@ -75,58 +75,33 @@ private _reinforcementCheckFrequencySecs = linearConversion [
     true
 ];
 
-private _minTimeBetweenReinforcementsRangeSecs = (_directorData get "minTimeBetweenReinforcementsRangeSecs");
-private _minTimeBetweenReinforcementsSecs = linearConversion [
-    0, vgm_s_director_max_alertness,
-    _alertness,
-    _minTimeBetweenReinforcementsRangeSecs # 0, _minTimeBetweenReinforcementsRangeSecs # 1,
-    true
-];
+private _playerEngagements = _directorData get "playerEngagements";
 
-if (count (_directorData get "playerEngagements") > 0) then {
+if (count _playerEngagements > 0) then {
     [format [
-        "[Reinforcements - Mission: %1] Reinforcement checks running | Check frequency = %2 | Min time between reinforcements = %3 |",
+        "[Reinforcements - Mission: %1] Reinforcement checks running | Check frequency = %2 |",
         _publicMission get "id",
-        _reinforcementCheckFrequencySecs,
-        _minTimeBetweenReinforcementsSecs
+        _reinforcementCheckFrequencySecs
     ]] call vgm_g_fnc_logDebug;
 };
 
+// Cluster players that are close to each other.
+private _playerClusters = [_missionPlayers, 50] call para_g_fnc_build_unit_clusters;
+
 {
-    private _engagement = _x;
+    private _players = _x;
+    private _engagements = _players apply { _playerEngagements get hashValue _x } select { !isNil "_x" };
     // Run the reinforcment check less often than the director ticks.
     // Importantly, this controls the initial reinforcment delay for new engagements!
-    private _checkedRecently = serverTime - (_engagement get "lastReinforcementCheck") < _reinforcementCheckFrequencySecs;
+    // Use the oldest check time among players - that's the least forgiving, as new players join with this at serverTime.
+    // Other values allow new players joining the cluster to increase reinforcement delay.
+    // This way, an engaged player joining a cluster will be bringing trouble with them too - which feels thematic.
+    private _lastReinforcementCheck = selectMin ( [serverTime] + (_engagements apply { _x get "lastReinforcementCheck" }) );
+    private _checkedRecently = serverTime - _lastReinforcementCheck < _reinforcementCheckFrequencySecs;
     if (_checkedRecently) then {
         continue;
     };
+    { _x set ["lastReinforcementCheck", serverTime] } forEach _engagements;
 
-    _engagement set ["lastReinforcementCheck", serverTime];
-    private _engagementPlayerHash = _engagement get "playerHash";
-    // Technically this always grows (nothing removes players from here), but shouldn't be a problem as directorData is deleted on mission end.
-    private _lastReinforcementSent = _directorData get "lastReinforcementSentPerPlayer" getOrDefault [_engagementPlayerHash, -9999];
-    private _reinforcementsSentRecently = (serverTime - _lastReinforcementSent) < _minTimeBetweenReinforcementsSecs;
-
-    // Avoid spamming players with squads, no matter what.
-    if (_reinforcementsSentRecently) then {
-        [format ["[Reinforcements - Mission: %1, Player: %2] Skipping reinforce - squad spawned recently", _publicMission get "id", _engagement get "player"]] call vgm_g_fnc_logDebug;
-        continue;
-    };
-
-    // Roll the dice on spawning reinforcements. Adds a little variation, and provides an extra tuning option.
-    if (random 1 > (_directorData get "reinforcementChance")) then {
-        [format ["[Reinforcements - Mission: %1, Player: %2] Skipping reinforce - random roll failed", _publicMission get "id", _engagement get "player"]] call vgm_g_fnc_logDebug;
-        continue;
-    };
-
-    [format ["[Reinforcements - Mission: %1, Player: %2] Attempting to create squad", _publicMission get "id", _engagement get "player"]] call vgm_g_fnc_logInfo;
-    private _squad = [_mission, _engagement get "player"] call vgm_s_fnc_director_spawnReinforcements;
-
-    if (isNil "_squad") then {
-        [format ["[Reinforcements - Mission: %1, Player: %2] Failed to create squad", _publicMission get "id", _engagement get "player"]] call vgm_g_fnc_logInfo;
-        continue;
-    };
-
-    _directorData get "lastReinforcementSentPerPlayer" set [_engagementPlayerHash, serverTime];
-
-} forEach values (_directorData get "playerEngagements");
+    [_mission, _players, "Ongoing engagements"] call vgm_s_fnc_director_attemptReinforcements;
+} forEach _playerClusters;

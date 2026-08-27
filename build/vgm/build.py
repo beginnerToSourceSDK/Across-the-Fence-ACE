@@ -73,10 +73,10 @@ def build(source_path, paradigm_path, params: BuildParams):
             continue
         create_mission_in(mission, output_paths[BuildArtifact.MISSION], overwrite, clean)
 
-    if gamemode.client_mod:
+    if as_mod and gamemode.client_mod:
         create_mod(gamemode.client_mod, output_paths[BuildArtifact.CLIENT_MOD], overwrite, clean)
 
-    if gamemode.server_mod:
+    if as_mod and gamemode.server_mod:
         create_mod(gamemode.server_mod, output_paths[BuildArtifact.SERVER_MOD], overwrite, clean)
 
 class PackType(Enum):
@@ -90,22 +90,16 @@ pack_funcs = {
     PackType.Release: hemtt.release
 }
 
-def pack(source_path: Path, output_paths=Dict[BuildArtifact,Path], pack_type=PackType) -> bool:
+def pack_mods(mod_paths=Dict[BuildArtifact,Path], pack_type=PackType) -> bool:
     hemtt_build_command = pack_funcs[pack_type]
 
     is_success = True
 
-    for (artifact, path) in output_paths.items():
+    for (artifact, path) in mod_paths.items():
         if artifact == BuildArtifact.CLIENT_MOD or artifact == BuildArtifact.SERVER_MOD and path.exists():
             result = hemtt_build_command(path)
             if result.returncode > 0:
                 is_success = False
-
-    missions_output_path = output_paths.get(BuildArtifact.MISSION, None)
-    if missions_output_path:
-        for mission_path in calculate_mission_output_paths(source_path, missions_output_path):
-            # TODO - Build with armake2
-            pass
 
     return is_success
 

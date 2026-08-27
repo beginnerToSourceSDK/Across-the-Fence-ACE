@@ -3,7 +3,7 @@
     File: fn_director_preinit.sqf
     Author: Savage Game Design
     Date: 2023-09-23
-    Last Update: 2025-09-10
+    Last Update: 2026-01-11
     Public: No
 
     Description:
@@ -19,19 +19,21 @@
         [] call vgm_s_fnc_director_preinit;
  */
 
+
 vgm_s_director_max_alertness = 100;
 vgm_s_director_alertness_period_secs = 5;
 vgm_s_director_tracker_spawn_alertness_threshold = 6;
-vgm_s_director_min_time_between_trackers_secs = 90;
+vgm_s_director_min_time_between_trackers_secs = 120;
 vgm_s_director_max_time_between_trackers_secs = 600;
 vgm_s_director_dynamic_max_groups = 8;
 // Every alertness period will add a fixed amount of alertness based on the most significant event to happen.
 vgm_s_director_noiseEventAlertness = createHashMapFromArray [
-    ["player_explosion", 3],
+    ["player_explosion", [0, 3]],
     ["player_flare", 5],
     ["unsuppressedShots", 1.5],
     ["suppressedShots", 0.75]
 ];
+
 
 vgm_s_director_defenseSquadSizeRanges = createHashMapFromArray [
     //[Site size, [ Min, Max ]]
@@ -40,7 +42,41 @@ vgm_s_director_defenseSquadSizeRanges = createHashMapFromArray [
     [SITE_FOOTPRINT_LARGE, [5, 10]]
 ];
 
+vgm_s_director_areZombiesEnabled = [] call vgm_s_fnc_director_checkZombiesEnabled;
+vgm_s_director_spawnAmbientZombies = vgm_s_director_areZombiesEnabled;
+
+vgm_s_director_zombieSiteTypeChances =
+    if (vgm_s_director_areZombiesEnabled) then {
+        createHashMapFromArray [
+            ["ALL_ZOMBIES", 4],
+            ["ALL_OPFOR", 1],
+            ["MIXED", 1]
+        ]
+    } else {
+        createHashMapFromArray [
+            ["ALL_OPFOR", 1]
+        ]
+    };
+
+vgm_s_director_zombieAlertAlertness = 3;
+vgm_s_director_staticZombieWeightings = [
+    "_zombie_medium_nobrain", 4,
+    "_zombie_fast_nobrain", 2,
+    "_zombie_slow_nobrain", 1,
+    "_zombie_slow2_nobrain", 1,
+    "_zombie_crawler_nobrain", 1
+];
+
+vgm_s_director_reinforcementZombieWeightings = [
+    "_zombie_slow_nobrain", 1,
+    "_zombie_slow2_nobrain", 1,
+    "_zombie_medium_nobrain", 4,
+    "_zombie_fast_nobrain", 2
+];
+
+
 // TODO - Replace these with Mike Force's squad generator
+
 vgm_s_director_patrol_classes = [
     'vn_o_men_nva_02',
     'vn_o_men_nva_04',
@@ -144,6 +180,16 @@ vgm_s_director_attack_classes = [
             ]] call vgm_g_fnc_logDebug;
         };
 
+        // handle Playing Possum skill
+        if (_playersOnMission findIf { _x getVariable ["vgm_g_skill_canPlayPossum", false] } > -1) exitWith {
+            [format [
+                "%1 - Mission continues - at least one player is Playing Possum",
+                _logPrefix
+            ]] call vgm_g_fnc_logDebug;
+
+            ["vgm_skill_passives_playingPossum", [], _playersOnMission] call para_g_fnc_event_triggerTargets;
+        };
+
         [format ["%1 - No players alive, ending mission", _logPrefix]] call vgm_g_fnc_logDebug;
 
         [_missionId, "FAILURE"] call vgm_s_fnc_missions_endMission;
@@ -226,7 +272,8 @@ call {
                 "heli"
             ] call BIS_fnc_taskCreate;
 
-            waitUntil {_helicopter getVariable ["vgm_missions_extractionLanded", false]};
+            waitUntil {_helicopter getVariable ["vgm_missions_extractionLanded", false] || isNull _helicopter};
+            if (isNull _helicopter) exitWith {};
 
             [
                 _playerGroup,
@@ -248,7 +295,7 @@ call {
     }] call para_g_fnc_event_subscribeLocal;
 
     ["vgm_mission_ended", {
-        (_this#0) params ["_missionId", "_helicopter"];
+        (_this#0) params ["_missionId", "_endType"];
 
         [format ["vgm_extract_%1", _missionId], true, true] call BIS_fnc_deleteTask;
     }] call para_g_fnc_event_subscribeLocal;

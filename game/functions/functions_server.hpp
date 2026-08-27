@@ -102,10 +102,14 @@ class vgm_s
         class director_addAlertness {
             headerType = -1;
         };
+        class director_attemptReinforcements {};
+        class director_checkZombiesEnabled {};
         class director_getDirectorForMissionId {};
         class director_getEnemySquadTemplate {};
+        class director_getZombieSquadTemplate {};
         class director_onPlayerNoiseEvent {};
         class director_processMission {};
+        class director_spawnAmbientZombies {};
         class director_spawnInitialPatrols {};
         class director_spawnReinforcements {};
         class director_spawnTracker {};
@@ -123,6 +127,13 @@ class vgm_s
         class director_preinitEngagements {};
         class director_removeEnemyGroupFromPlayerEngagement {};
         class director_setupEngagements {};
+    };
+
+    class mission_director_reinforcement_requests
+    {
+        VGM_SERVER_PATH(\systems\mission_director\server\reinforcement_requests);
+        class director_handleReinforcementRequest {};
+        class director_setupReinforcementRequests {};
     };
 
     class missions_objects
@@ -144,8 +155,11 @@ class vgm_s
 
         class missions_createMission {};
         class missions_endMission {};
+        class missions_getAllMissions {};
         class missions_getAssignedMission {};
         class missions_getById {};
+        class missions_getFullness {};
+        class missions_getPlayers {};
         class missions_joinMission {};
         class missions_leaveMission {};
         class missions_preInit {
@@ -223,7 +237,7 @@ class vgm_s
         class missions_gameplay_scouting_setSpottable {};
     };
 
-    class missions_selection
+    class missions_zones
     {
         VGM_SERVER_PATH(\systems\missions_zones\server);
 
@@ -231,6 +245,10 @@ class vgm_s
         class missions_zones_freeZone {};
         class missions_zones_getSites {};
         class missions_zones_getStartPos {};
+        class missions_zones_postInit
+        {
+            postInit = 1;
+        };
         class missions_zones_preInit
         {
             preInit = 1;
@@ -269,6 +287,17 @@ class vgm_s
         class player_fetch {};
         class player_fromId {};
         class player_save {};
+    };
+
+    class respawn
+    {
+        VGM_SERVER_PATH(\systems\respawn\server);
+
+        class respawn_clearMissionRallyPoint {};
+        class respawn_postInit {
+            postInit = 1;
+        };
+        class respawn_setMissionRallyPoint {};
     };
 
     class leveling
@@ -310,6 +339,23 @@ class vgm_s
             preInit = 1;
         };
         class loc_setTargetBoxIndex {};
+    };
+
+    class rto {
+        VGM_SERVER_PATH(\systems\rto\server);
+
+        class rto_addAvailableAircraft {};
+        class rto_clearAvailableAircraft {};
+        class rto_dismissAircraft {};
+        class rto_flaresUntilDawn {};
+        class rto_guideBomb {};
+        class rto_performStrike {};
+        class rto_preInit
+        {
+            preInit = 1;
+        };
+        class rto_requestAircraft {};
+        class rto_requestStrike {};
     };
 
     class shared_hub
@@ -402,6 +448,7 @@ class vgm_s
             preInit = 1;
         };
 
+        class skills_recalculateSkillPoints {};
         class skills_teachSkill {};
     };
 
@@ -409,9 +456,19 @@ class vgm_s
     {
         VGM_SERVER_PATH(\systems\skills\server\network);
 
+        class skills_handle_recalculateSkillPoints {};
         class skills_handle_skillLearnRequest {};
         class skills_handle_skillRespecRequest {};
         class skills_handle_skillsDataRequest {};
+    };
+
+    class time_of_day_voting
+    {
+        VGM_SERVER_PATH(\systems\time_of_day_voting\server);
+        class timeOfDayVote_preInit { preInit = 1; };
+        class timeOfDayVote_remoteExec_startPreMissionVote {};
+        class timeOfDayVote_setTime {};
+        class timeOfDayVote_startPreMissionVote {};
     };
 
     class virtsquad

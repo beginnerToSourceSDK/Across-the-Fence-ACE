@@ -6,23 +6,35 @@ class vgm_skillTemplate {
     icon = "\vn\ui_f_vietnam\ui\wheelmenu\img\ui_icon_a_ca.paa";
 
     skillType = 0; // 0 - passive, 1 - primary, 2 - ultimate
-    applyOnRespawn = 0;
 
     cost = 1;
     cooldown = 10;
     duration = 0;
 
-    conditionUnlock[] = {};
+    conditionsUnlockGlobal[] = {};
     conditionShow = "true";
     conditionActivate = "true";
 
+    // If 1, re-runs codeApply on respawn
+    applyOnRespawn = 0;
     // Called when the skill is learned
     codeApply = "";
     // Called when the skill is unlearned
     codeUnapply = "";
 
+    // If 1, re-runs codeApplyGroup locally for the respawning player in the group
+    applyOnRespawnGroup = 0;
+    // Called locally on every player when in a mission with the skill's owner to apply the skill's effect.
+    // Called once for each player that has the skill on the mission.
+    codeApplyGroup = "";
+    // Called locally on every player when no longer in a mission with the skill's owner to remove the skill's effect.
+    // Called once for each player that had the skill on the mission.
+    codeUnapplyGroup = "";
+
     // Called when an ability is triggered
     codeActivate = "";
+    // Called on all members of the team when an ability is triggered
+    codeActivateGroup = "";
     // Called when an ability has ended
     codeDeactivate = "";
     // Called when  an ability is unable to activate
@@ -30,11 +42,24 @@ class vgm_skillTemplate {
 };
 
 class vgm_weaponSpecialisationTemplate: vgm_skillTemplate {
-    conditionUnlock[] = {
-        { "!(missionNamespace getVariable ['vgm_c_skill_hasWeaponSpecialisation', false])", "STR_VGM_SKILLS_UI_WEAPON_SPECIALISATION_LIMIT" }
+    conditionsUnlockGlobal[] = {
+        {
+            "!((_this#0) getVariable ['vgm_c_skill_hasWeaponSpecialisation', false])",
+            "STR_VGM_SKILLS_UI_WEAPON_SPECIALISATION_LIMIT"
+        }
     };
-    codeApply = "vgm_c_skill_hasWeaponSpecialisation = true";
-    codeUnapply  = "vgm_c_skill_hasWeaponSpecialisation = false";
+    codeApply = "player setVariable ['vgm_c_skill_hasWeaponSpecialisation', true, true]";
+    codeUnapply  = "player setVariable ['vgm_c_skill_hasWeaponSpecialisation', false, true]";
+};
+
+class vgm_skillAdvancedTrainingTemplate: vgm_skillTemplate {
+    conditionsUnlockGlobal[] = {
+        {
+            "!((_this#0) getUnitTrait 'vgm_skills_advancedTraining')",
+            "STR_VGM_SKILLS_UI_ADVANCED_TRAINING_LIMIT"
+        }
+    };
+    applyOnRespawn = 1;
 };
 
 class vgm_skillTrees {
@@ -152,7 +177,7 @@ class vgm_skillTrees {
                     description = "$STR_VGM_SKILLS_SKILL_JUNGLE_WARRIOR_DESC";
                     column = 3;
                     // TODO - Implement this skill
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     cost = 2;
                 };
 
@@ -220,11 +245,11 @@ class vgm_skillTrees {
 
                     codeApply = "\
                         [player, 'load', 'skill_loadedForBear', -0.3, true] call vgm_c_fnc_coefficient_set;\
-                        [player, 'staminaDrain', 'skill_loadedForBear', -0.2, true] call vgm_c_fnc_coefficient_set;\
+                        [player, 'staminaDrainSkills', 'skill_loadedForBear', -0.2, true] call vgm_c_fnc_coefficient_set;\
                     ";
                     codeUnapply = "\
                         [player, 'load', 'skill_loadedForBear'] call vgm_c_fnc_coefficient_remove;\
-                        [player, 'staminaDrain', 'skill_loadedForBear'] call vgm_c_fnc_coefficient_remove;\
+                        [player, 'staminaDrainSkills', 'skill_loadedForBear'] call vgm_c_fnc_coefficient_remove;\
                     ";
                     skillType = 0;
                     cost = 3;
@@ -289,7 +314,7 @@ class vgm_skillTrees {
                     description = "$STR_VGM_SKILLS_SKILL_WAR_FACE_DESC";
                     column = 3;
 
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     codeApply = "";
                     codeUnapply = "";
                     skillType = 0;
@@ -302,7 +327,7 @@ class vgm_skillTrees {
                     description = "$STR_VGM_SKILLS_SKILL_KNOCKOUT_DESC";
                     column = 4;
 
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     codeApply = "";
                     codeUnapply = "";
                     skillType = 0;
@@ -320,22 +345,20 @@ class vgm_skillTrees {
 
         class skills {
             class tier_0 {
-                class training_pointman: vgm_skillTemplate {
+                class training_pointman: vgm_skillAdvancedTrainingTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TRAINING_POINTMAN";
                     description = "$STR_VGM_SKILLS_SKILL_TRAINING_POINTMAN_DESC";
-                    conditionUnlock[] = { { "!(player getUnitTrait 'vgm_skills_advancedTraining')", "STR_VGM_SKILLS_UI_ADVANCED_TRAINING_LIMIT" } };
                     column = 0;
 
-                    codeApply = "player setUnitTrait ['vgm_skills_advancedTraining', true, true];";
-                    codeUnapply = "player setUnitTrait ['vgm_skills_advancedTraining', false, true];";
+                    codeApply = "player setUnitTrait ['vgm_skills_advancedTraining', true, true]; ['pointman'] call vgm_c_fnc_skills_setTreeDiscount;";
+                    codeUnapply = "player setUnitTrait ['vgm_skills_advancedTraining', false, true]; ['pointman', 1] call vgm_c_fnc_skills_setTreeDiscount;";
                     cost = 2;
-                    applyOnRespawn = 1;
                 };
 
                 class eldest_son: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ELDEST_SON";
                     description = "$STR_VGM_SKILLS_SKILL_ELDEST_SON_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -357,7 +380,7 @@ class vgm_skillTrees {
                 class blending_in: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_BLENDING_IN";
                     description = "$STR_VGM_SKILLS_SKILL_BLENDING_IN_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -367,7 +390,7 @@ class vgm_skillTrees {
                 class jungle_instinct: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_JUNGLE_INSTINCT";
                     description = "$STR_VGM_SKILLS_SKILL_JUNGLE_INSTINCT_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
                     // TODO - Implementation
@@ -421,7 +444,7 @@ class vgm_skillTrees {
                 class cutthroat: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CUTTHROAT";
                     description = "$STR_VGM_SKILLS_SKILL_CUTTHROAT_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -441,7 +464,7 @@ class vgm_skillTrees {
                 class handrail: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_HANDRAIL";
                     description = "$STR_VGM_SKILLS_SKILL_HANDRAIL_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
                     // TODO - Implementation
@@ -478,7 +501,7 @@ class vgm_skillTrees {
                 class eavesdropping: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_EAVESDROPPING";
                     description = "$STR_VGM_SKILLS_SKILL_EAVESDROPPING_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -536,7 +559,7 @@ class vgm_skillTrees {
                 class pile_of_leaves: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_PILE_OF_LEAVES";
                     description = "$STR_VGM_SKILLS_SKILL_PILE_OF_LEAVES_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -546,7 +569,7 @@ class vgm_skillTrees {
                 class throwing_knife: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_THROWING_KNIFE";
                     description = "$STR_VGM_SKILLS_SKILL_THROWING_KNIFE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -563,20 +586,20 @@ class vgm_skillTrees {
 
         class skills {
             class tier_0 {
-                class training_team_leader: vgm_skillTemplate {
+                class training_team_leader: vgm_skillAdvancedTrainingTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TRAINING_TEAM_LEADER";
                     description = "$STR_VGM_SKILLS_SKILL_TRAINING_TEAM_LEADER_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
-                    // TODO - Implementation
+                    codeApply = "player setUnitTrait ['vgm_skills_advancedTraining', true, true]; ['teamLeader'] call vgm_c_fnc_skills_setTreeDiscount;";
+                    codeUnapply = "player setUnitTrait ['vgm_skills_advancedTraining', false, true]; ['teamLeader', 1] call vgm_c_fnc_skills_setTreeDiscount;";
                     cost = 2;
                 };
 
                 class ma_bell: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_MA_BELL";
                     description = "$STR_VGM_SKILLS_SKILL_MA_BELL_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -588,7 +611,7 @@ class vgm_skillTrees {
                 class target_folder_1: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TARGET_FOLDER_1";
                     description = "$STR_VGM_SKILLS_SKILL_TARGET_FOLDER_1_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -598,17 +621,18 @@ class vgm_skillTrees {
                 class fire_direction: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_FIRE_DIRECTION";
                     description = "$STR_VGM_SKILLS_SKILL_FIRE_DIRECTION_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "true call vgm_c_fnc_skill_passives_fireDirection";
+                    codeUnapply = "false call vgm_c_fnc_skill_passives_fireDirection";
                     cost = 2;
+                    applyOnRespawn = 1;
                 };
 
                 class ammo_check: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_AMMO_CHECK";
                     description = "$STR_VGM_SKILLS_SKILL_AMMO_CHECK_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
                     // TODO - Implementation
@@ -618,11 +642,12 @@ class vgm_skillTrees {
                 class kickoff_time: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_KICKOFF_TIME";
                     description = "$STR_VGM_SKILLS_SKILL_KICKOFF_TIME_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
-                    // TODO - Implementation
+                    codeApply = "true call vgm_c_fnc_skill_passives_kickOffTime";
+                    codeUnapply = "false call vgm_c_fnc_skill_passives_kickOffTime";
                     cost = 2;
+                    applyOnRespawn = 1;
                 };
             };
 
@@ -630,33 +655,33 @@ class vgm_skillTrees {
                 class roll_call: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ROLL_CALL";
                     description = "$STR_VGM_SKILLS_SKILL_ROLL_CALL_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
-                    // TODO - Implementation
+                    // Note - make sure duration here matches duration below.
+                    codeActivateGroup = "[player, 'squadUiMapDrawEveryone', 'skill_rollCall', 60, true] call vgm_c_fnc_statusEffect_set;";
                     skillType = 2;
                     cost = 4;
                     cooldown = 240;
                     duration = 60;
                 };
 
-                class mad_minute: vgm_skillTemplate {
-                    displayName = "$STR_VGM_SKILLS_SKILL_MAD_MINUTE";
-                    description = "$STR_VGM_SKILLS_SKILL_MAD_MINUTE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                class emergency_stash: vgm_skillTemplate {
+                    displayName = "$STR_VGM_SKILLS_SKILL_EMERGENCY_STASH";
+                    description = "$STR_VGM_SKILLS_SKILL_EMERGENCY_STASH_DESC";
                     column = 1;
 
-                    // TODO - Implementation
                     skillType = 2;
+                    // Note - make sure duration here matches duration below.
+                    codeActivateGroup = "[player, 'infiniteMagazines', 'skill_emergencyStash', 60] call vgm_c_fnc_statusEffect_set";
                     cost = 4;
-                    cooldown = 240;
-                    duration = 20;
+                    cooldown = 480;
+                    duration = 60;
                 };
 
                 class target_folder_2: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TARGET_FOLDER_2";
                     description = "$STR_VGM_SKILLS_SKILL_TARGET_FOLDER_2_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -666,27 +691,28 @@ class vgm_skillTrees {
                 class sanctuary: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SANCTUARY";
                     description = "$STR_VGM_SKILLS_SKILL_SANCTUARY_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+					codeApply = "true call vgm_c_fnc_skill_passives_sanctuary";
+					codeUnapply = "false call vgm_c_fnc_skill_passives_sanctuary";
                     cost = 4;
+                    applyOnRespawn = 1;
                 };
 
                 class ditch_rucks: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_DITCH_RUCKS";
                     description = "$STR_VGM_SKILLS_SKILL_DITCH_RUCKS_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
-                    // TODO - Implementation
+                    codeApplyGroup = "true call vgm_c_fnc_skill_passives_ditchRucks";
+                    codeUnapplyGroup = "false call vgm_c_fnc_skill_passives_ditchRucks";
                     cost = 4;
                 };
 
                 class ron_call: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_RON_CALL";
                     description = "$STR_VGM_SKILLS_SKILL_RON_CALL_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
                     // TODO - Implementation
@@ -698,10 +724,9 @@ class vgm_skillTrees {
                 class break_contact: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_BREAK_CONTACT";
                     description = "$STR_VGM_SKILLS_SKILL_BREAK_CONTACT_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
-                    // TODO - Implementation
+                    codeActivateGroup = "[false] call vgm_c_fnc_stealth_setVisible; [player, 'stealthUndetectable', 'skill_breakContact', 5] call vgm_c_fnc_statusEffect_set;";
                     skillType = 2;
                     cost = 6;
                     cooldown = 560;
@@ -710,10 +735,9 @@ class vgm_skillTrees {
                 class get_to_the_lz: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_GET_TO_THE_LZ";
                     description = "$STR_VGM_SKILLS_SKILL_GET_TO_THE_LZ_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
-                    // TODO - Implementation
+                    codeActivateGroup = "_this call vgm_c_fnc_skill_actives_getToTheLz";
                     skillType = 2;
                     cost = 6;
                     cooldown = 600;
@@ -723,17 +747,17 @@ class vgm_skillTrees {
                 class team_awareness: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TEAM_AWARENESS";
                     description = "$STR_VGM_SKILLS_SKILL_TEAM_AWARENESS_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'squadUiMapDrawEveryone', 'skill_teamAwareness', -1, true] call vgm_c_fnc_statusEffect_set;";
+                    codeUnapply = "[player, 'squadUiMapDrawEveryone', 'skill_teamAwareness'] call vgm_c_fnc_statusEffect_remove;";
                     cost = 6;
                 };
 
                 class alternate_lz: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ALTERNATE_LZ";
                     description = "$STR_VGM_SKILLS_SKILL_ALTERNATE_LZ_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -743,10 +767,10 @@ class vgm_skillTrees {
                 class get_it_together: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_GET_IT_TOGETHER";
                     description = "$STR_VGM_SKILLS_SKILL_GET_IT_TOGETHER_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
-                    // TODO - Implementation
+                    codeApplyGroup = "[player, 'skillCooldown', 'skill_getItTogether', -0.2, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapplyGroup = "[player, 'skillCooldown', 'skill_getItTogether', -0.2, true] call vgm_c_fnc_coefficient_set";
                     cost = 6;
                 };
             };
@@ -755,10 +779,9 @@ class vgm_skillTrees {
                 class one_team: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ONE_TEAM";
                     description = "$STR_VGM_SKILLS_SKILL_ONE_TEAM_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
-                    // TODO - Implementation
+					codeActivateGroup = "_this call vgm_c_fnc_skill_actives_oneTeam";
                     skillType = 2;
                     cost = 8;
                     cooldown = 900;
@@ -767,7 +790,7 @@ class vgm_skillTrees {
                 class prairie_fire: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_PRAIRIE_FIRE";
                     description = "$STR_VGM_SKILLS_SKILL_PRAIRIE_FIRE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -780,7 +803,7 @@ class vgm_skillTrees {
                 class target_folder_3: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TARGET_FOLDER_3";
                     description = "$STR_VGM_SKILLS_SKILL_TARGET_FOLDER_3_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -790,11 +813,12 @@ class vgm_skillTrees {
                 class rally_point: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_RALLY_POINT";
                     description = "$STR_VGM_SKILLS_SKILL_RALLY_POINT_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "[true] call vgm_c_fnc_skill_passives_rallyPoint";
+                    codeUnapply = "[false] call vgm_c_fnc_skill_passives_rallyPoint";
                     cost = 8;
+                    applyOnRespawn = 1;
                 };
             };
         };
@@ -807,26 +831,24 @@ class vgm_skillTrees {
 
         class skills {
             class tier_0 {
-                class training_rto: vgm_skillTemplate {
+                class training_rto: vgm_skillAdvancedTrainingTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TRAINING_RTO";
                     description = "$STR_VGM_SKILLS_SKILL_TRAINING_RTO_DESC";
-                    conditionUnlock[] = { { "!(player getUnitTrait 'vgm_skills_advancedTraining')", "STR_VGM_SKILLS_UI_ADVANCED_TRAINING_LIMIT" } };
                     column = 0;
 
-                    codeApply = "player setUnitTrait ['vgm_skills_advancedTraining', true, true]; player setUnitTrait ['vn_artillery', true, true]; player setUnitTrait ['vgm_artillery_heavySupport', true, true]";
-                    codeUnapply = "player setUnitTrait ['vgm_skills_advancedTraining', false, true]; player setUnitTrait ['vn_artillery', false, true]; player setUnitTrait ['vgm_artillery_heavySupport', false, true]";
-                    cost = 10;
-                    applyOnRespawn = 1;
+                    codeApply = "player setUnitTrait ['vgm_skills_advancedTraining', true, true]; player setUnitTrait ['vgm_radio_operator', true, true]; ['rto'] call vgm_c_fnc_skills_setTreeDiscount;";
+                    codeUnapply = "player setUnitTrait ['vgm_skills_advancedTraining', false, true]; player setUnitTrait ['vgm_radio_operator', false, true]; ['rto', 1] call vgm_c_fnc_skills_setTreeDiscount;";
+                    cost = 2;
                 };
 
                 class emergency_radio: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_EMERGENCY_RADIO";
                     description = "$STR_VGM_SKILLS_SKILL_EMERGENCY_RADIO_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
-                    // TODO - Implementation
-                    cost = 8;
+                    codeApply = "player setUnitTrait ['vgm_radio_operator_handheld', true, true];";
+                    codeUnapply = "player setUnitTrait ['vgm_radio_operator_handheld', false, true];";
+                    cost = 6;
                 };
             };
 
@@ -834,10 +856,10 @@ class vgm_skillTrees {
                 class cas_fast_mover_level_1: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_1";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_1_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'f100d_mk82'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'f100d_mk82'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 2;
                 };
 
@@ -845,10 +867,10 @@ class vgm_skillTrees {
                 class cas_gunship_level_1: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_1";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_1_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'uh1c_gunship'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'uh1c_gunship'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 2;
                 };
 
@@ -856,10 +878,10 @@ class vgm_skillTrees {
                 class fireship: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_FIRESHIP";
                     description = "$STR_VGM_SKILLS_SKILL_FIRESHIP_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'fireship'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'fireship'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 2;
                 };
 
@@ -867,10 +889,10 @@ class vgm_skillTrees {
                 class strobe_marker: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_STROBE_MARKER";
                     description = "$STR_VGM_SKILLS_SKILL_STROBE_MARKER_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
-                    // TODO - Implementation
+                    codeApply = "player setUnitTrait ['vgm_rto_reduceNightPenalties', true, true];";
+                    codeUnapply = "player setUnitTrait ['vgm_rto_reduceNightPenalties', false, true];";
                     cost = 2;
                 };
             };
@@ -879,7 +901,7 @@ class vgm_skillTrees {
                 class sitrep: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SITREP";
                     description = "$STR_VGM_SKILLS_SKILL_SITREP_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
                     // TODO - Implementation
@@ -892,7 +914,7 @@ class vgm_skillTrees {
                 class stinger: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_STINGER";
                     description = "$STR_VGM_SKILLS_SKILL_STINGER_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -905,10 +927,10 @@ class vgm_skillTrees {
                 class cas_fast_mover_level_2: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_2";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_2_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'f100d_mk82_napalm'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'f100d_mk82_napalm'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 4;
                 };
 
@@ -916,10 +938,10 @@ class vgm_skillTrees {
                 class cas_gunship_level_2: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_2";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_2_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'uh1c_heavy_hog'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'uh1c_heavy_hog'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 4;
                 };
 
@@ -927,10 +949,10 @@ class vgm_skillTrees {
                 class shadow: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SHADOW";
                     description = "$STR_VGM_SKILLS_SKILL_SHADOW_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'shadow'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'shadow'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 4;
                 };
 
@@ -938,10 +960,10 @@ class vgm_skillTrees {
                 class long_antenna: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_LONG_ANTENNA";
                     description = "$STR_VGM_SKILLS_SKILL_LONG_ANTENNA_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
-                    // TODO - Implementation
+                    codeApply = "player setUnitTrait ['vgm_rto_reduceWeatherPenalties', true, true];";
+                    codeUnapply = "player setUnitTrait ['vgm_rto_reduceWeatherPenalties', false, true];";
                     cost = 4;
                 };
             };
@@ -950,7 +972,7 @@ class vgm_skillTrees {
                 class guardian_angel: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_GUARDIAN_ANGEL";
                     description = "$STR_VGM_SKILLS_SKILL_GUARDIAN_ANGEL_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
                     // TODO - Implementation
@@ -963,7 +985,7 @@ class vgm_skillTrees {
                 class arclight: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ARCLIGHT";
                     description = "$STR_VGM_SKILLS_SKILL_ARCLIGHT_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -976,10 +998,10 @@ class vgm_skillTrees {
                 class cas_fast_mover_level_3: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_3";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_3_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'f4c'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'f4c'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 6;
                 };
 
@@ -987,10 +1009,10 @@ class vgm_skillTrees {
                 class cas_gunship_level_3: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_3";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_3_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'uh1c_ara'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'uh1c_ara'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 6;
                 };
 
@@ -998,7 +1020,7 @@ class vgm_skillTrees {
                 class cas_covey: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_COVEY";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_COVEY_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
                     // TODO - Implementation
@@ -1010,7 +1032,7 @@ class vgm_skillTrees {
                 class repeat_last: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_REPEAT_LAST";
                     description = "$STR_VGM_SKILLS_SKILL_REPEAT_LAST_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
                     // TODO - Implementation
@@ -1024,7 +1046,7 @@ class vgm_skillTrees {
                 class big_blue: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_BIG_BLUE";
                     description = "$STR_VGM_SKILLS_SKILL_BIG_BLUE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -1037,10 +1059,10 @@ class vgm_skillTrees {
                 class cas_fast_mover_level_4: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_4";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_FAST_MOVER_LEVEL_4_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'f4b'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'f4b'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 8;
                 };
 
@@ -1048,10 +1070,10 @@ class vgm_skillTrees {
                 class cas_gunship_level_4: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_4";
                     description = "$STR_VGM_SKILLS_SKILL_CAS_GUNSHIP_LEVEL_4_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "[true, 'ah1g'] call vgm_c_fnc_skill_passives_addAircraft;";
+                    codeUnapply = "[false, 'ah1g'] call vgm_c_fnc_skill_passives_addAircraft;";
                     cost = 8;
                 };
             };
@@ -1065,22 +1087,20 @@ class vgm_skillTrees {
 
         class skills {
             class tier_0 {
-                class training_medic: vgm_skillTemplate {
+                class training_medic: vgm_skillAdvancedTrainingTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TRAINING_MEDIC";
                     description = "$STR_VGM_SKILLS_SKILL_TRAINING_MEDIC_DESC";
-                    conditionUnlock[] = { { "!(player getUnitTrait 'vgm_skills_advancedTraining')", "STR_VGM_SKILLS_UI_ADVANCED_TRAINING_LIMIT" } };
                     column = 0;
 
-                    codeApply = "player setUnitTrait ['vgm_skills_advancedTraining', true, true]; player setUnitTrait ['Medic', true]";
-                    codeUnapply = "player setUnitTrait ['vgm_skills_advancedTraining', false, true]; player setUnitTrait ['Medic', false]";
-                    cost = 8;
-                    applyOnRespawn = 1;
+                    codeApply = "player setUnitTrait ['vgm_skills_advancedTraining', true, true]; player setUnitTrait ['Medic', true]; ['medic'] call vgm_c_fnc_skills_setTreeDiscount;";
+                    codeUnapply = "player setUnitTrait ['vgm_skills_advancedTraining', false, true]; player setUnitTrait ['Medic', false]; ['medic', 1] call vgm_c_fnc_skills_setTreeDiscount;";
+                    cost = 2;
                 };
 
                 class find_the_bicycle: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_FIND_THE_BICYCLE";
                     description = "$STR_VGM_SKILLS_SKILL_FIND_THE_BICYCLE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -1092,40 +1112,40 @@ class vgm_skillTrees {
                 class combat_doc_1: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_1";
                     description = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_1_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'interact_medical', 'skills_passives_combat_doc_1', -0.125, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapply = "[player, 'interact_medical', 'skills_passives_combat_doc_1'] call vgm_c_fnc_coefficient_remove";
                     cost = 4;
                 };
 
                 class keep_calm: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_KEEP_CALM";
                     description = "$STR_VGM_SKILLS_SKILL_KEEP_CALM_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'bleedOut', 'skill_passives_keep_calm', -0.20, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapply = "[player, 'bleedOut', 'skill_passives_keep_calm'] call vgm_c_fnc_coefficient_remove";
                     cost = 2;
                 };
 
                 class leg_pockets: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_LEG_POCKETS";
                     description = "$STR_VGM_SKILLS_SKILL_LEG_POCKETS_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
-                    // TODO - Implementation
+                    codeApply = "true call vgm_c_fnc_skill_passives_legPockets";
+                    codeUnapply = "false call vgm_c_fnc_skill_passives_legPockets";
                     cost = 2;
                 };
 
                 class not_dead_yet: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_NOT_DEAD_YET";
                     description = "$STR_VGM_SKILLS_SKILL_NOT_DEAD_YET_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'respawn_bonusLives', 'skill_passives_notDeadYet', 1, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapply = "[player, 'respawn_bonusLives', 'skill_passives_notDeadYet'] call vgm_c_fnc_coefficient_remove";
                     cost = 2;
                 };
             };
@@ -1134,11 +1154,20 @@ class vgm_skillTrees {
                 class tourniquet: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TOURNIQUET";
                     description = "$STR_VGM_SKILLS_SKILL_TOURNIQUET_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
-                    // TODO - Implementation
-                    skillType = 2;
+                    conditionActivate = "\
+                        private _target = cursorTarget;\
+                        if (isNull _target) exitWith {_target = player}; \
+                        _target getVariable ['vgm_g_medical_bleeding', false]\
+                        && {_target distance player <= 10}\
+                    ";
+                    codeActivate = "call vgm_c_fnc_skill_actives_medic_tourniquet";
+                    codeUnableToActivate = "\
+                        if (cursorTarget distance player > 10) exitWith {}; \
+                        hint localize 'STR_VGM_SKILLS_SKILL_TOURNIQUET_UNABLE_TO_APPLY'\
+                    ";
+                    skillType = 1;
                     cost = 4;
                     cooldown = 60;
                 };
@@ -1146,11 +1175,10 @@ class vgm_skillTrees {
                 class black_knight: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_BLACK_KNIGHT";
                     description = "$STR_VGM_SKILLS_SKILL_BLACK_KNIGHT_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
-                    // TODO - Implementation
-                    skillType = 2;
+                    codeActivateGroup = "[player, 'injuryEffectImmunity', 'skill_blackKnight', 120, true] call vgm_c_fnc_statusEffect_set";
+                    skillType = 1;
                     cost = 4;
                     cooldown = 480;
                     duration = 120;
@@ -1159,30 +1187,30 @@ class vgm_skillTrees {
                 class combat_doc_2: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_2";
                     description = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_2_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'interact_medical', 'skills_passives_combat_doc_2', -0.125, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapply = "[player, 'interact_medical', 'skills_passives_combat_doc_2'] call vgm_c_fnc_coefficient_remove";
                     cost = 4;
                 };
 
                 class he_aint_heavy: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_HE_AINT_HEAVY";
                     description = "$STR_VGM_SKILLS_SKILL_HE_AINT_HEAVY_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'carryCanRun', 'skill_passives_HeAintHeavy', -1, true] call vgm_c_fnc_statusEffect_set;";
+                    codeUnapply = "[player, 'carryCanRun', 'skill_passives_HeAintHeavy'] call vgm_c_fnc_statusEffect_remove;";
                     cost = 4;
                 };
 
                 class green_hornet: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_GREEN_HORNET";
                     description = "$STR_VGM_SKILLS_SKILL_GREEN_HORNET_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'staminaDrainSkills', 'skill_passives_greenHornet', -0.2, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapply = "[player, 'staminaDrainSkills', 'skill_passives_greenHornet'] call vgm_c_fnc_coefficient_remove";
                     cost = 4;
                 };
             };
@@ -1191,11 +1219,11 @@ class vgm_skillTrees {
                 class pack_the_wound: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_PACK_THE_WOUND";
                     description = "$STR_VGM_SKILLS_SKILL_PACK_THE_WOUND_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
-                    // TODO - Implementation
-                    skillType = 2;
+                    codeActivate = "[player, 'healModifier', 'skill_passives_packTheWound', 1, false] call vgm_c_fnc_coefficient_set";
+                    codeDeactivate = "[player, 'healModifier', 'skill_passives_packTheWound'] call vgm_c_fnc_coefficient_remove";
+                    skillType = 1;
                     cost = 6;
                     cooldown = 300;
                     duration = 30;
@@ -1204,11 +1232,10 @@ class vgm_skillTrees {
                 class salt_tablets: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SALT_TABLETS";
                     description = "$STR_VGM_SKILLS_SKILL_SALT_TABLETS_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
-                    // TODO - Implementation
-                    skillType = 2;
+                    codeActivateGroup = "call vgm_c_fnc_skill_actives_medic_saltTablets";
+                    skillType = 1;
                     cost = 6;
                     cooldown = 300;
                 };
@@ -1216,17 +1243,17 @@ class vgm_skillTrees {
                 class combat_doc_3: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_3";
                     description = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_3_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'interact_medical', 'skills_passives_combat_doc_3', -0.125, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapply = "[player, 'interact_medical', 'skills_passives_combat_doc_3'] call vgm_c_fnc_coefficient_remove";
                     cost = 4;
                 };
 
                 class last_rites: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_LAST_RITES";
                     description = "$STR_VGM_SKILLS_SKILL_LAST_RITES_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -1236,10 +1263,10 @@ class vgm_skillTrees {
                 class ive_seen_worse: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_IVE_SEEN_WORSE";
                     description = "$STR_VGM_SKILLS_SKILL_IVE_SEEN_WORSE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'limbInjuryEffectResistance', 'skill_passives_iveSeenWorse', -1, true] call vgm_c_fnc_statusEffect_set;";
+                    codeUnapply = "[player, 'limbInjuryEffectResistance', 'skill_passives_iveSeenWorse'] call vgm_c_fnc_statusEffect_remove;";
                     cost = 6;
                 };
             };
@@ -1248,11 +1275,19 @@ class vgm_skillTrees {
                 class its_only_a_flesh_wound: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ITS_ONLY_A_FLESH_WOUND";
                     description = "$STR_VGM_SKILLS_SKILL_ITS_ONLY_A_FLESH_WOUND_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
-                    // TODO - Implementation
-                    skillType = 2;
+                    conditionActivate = "\
+                        private _target = cursorTarget;\
+                        _target distance player <= 10\
+                        && {[_target] call vgm_g_fnc_medical_isWounded}\
+                    ";
+                    codeActivate = "[cursorTarget] call vgm_c_fnc_skill_actives_medic_itsOnlyAFleshWound";
+                    codeUnableToActivate = "\
+                        if (cursorTarget distance player > 10) exitWith {}; \
+                        hint localize 'STR_VGM_SKILLS_SKILL_ITS_ONLY_A_FLESH_WOUND_UNABLE_TO_APPLY'\
+                    ";
+                    skillType = 1;
                     cost = 8;
                     cooldown = 480;
                 };
@@ -1260,11 +1295,11 @@ class vgm_skillTrees {
                 class sweet_dreams: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SWEET_DREAMS";
                     description = "$STR_VGM_SKILLS_SKILL_SWEET_DREAMS_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
-                    skillType = 2;
+                    skillType = 1;
                     cost = 8;
                     cooldown = 180;
                 };
@@ -1272,30 +1307,30 @@ class vgm_skillTrees {
                 class combat_doc_4: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_4";
                     description = "$STR_VGM_SKILLS_SKILL_COMBAT_DOC_4_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
-                    // TODO - Implementation
+                    codeApply = "[player, 'interact_medical', 'skills_passives_combat_doc_4', -0.125, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapply = "[player, 'interact_medical', 'skills_passives_combat_doc_4'] call vgm_c_fnc_coefficient_remove";
                     cost = 4;
                 };
 
                 class green_hornet_pack: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_GREEN_HORNET_PACK";
                     description = "$STR_VGM_SKILLS_SKILL_GREEN_HORNET_PACK_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
-                    column = 3;
+                    column = 4;
 
-                    // TODO - Implementation
+                    codeApplyGroup = "[player, 'staminaDrainSkills', 'skill_passives_greenHornetPack', -0.2, true] call vgm_c_fnc_coefficient_set";
+                    codeUnapplyGroup = "[player, 'staminaDrainSkills', 'skill_passives_greenHornetPack'] call vgm_c_fnc_coefficient_remove";
                     cost = 8;
                 };
 
                 class playing_possum: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_PLAYING_POSSUM";
                     description = "$STR_VGM_SKILLS_SKILL_PLAYING_POSSUM_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
-                    column = 4;
+                    column = 5;
 
-                    // TODO - Implementation
+                    codeApply = "[true] call vgm_c_fnc_skill_passives_playingPossum";
+                    codeUnapply  = "[false] call vgm_c_fnc_skill_passives_playingPossum";
                     cost = 8;
                 };
             };
@@ -1312,7 +1347,7 @@ class vgm_skillTrees {
                 class training_tail: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TRAINING_TAIL";
                     description = "$STR_VGM_SKILLS_SKILL_TRAINING_TAIL_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
                     // TODO - Implementation
@@ -1322,7 +1357,7 @@ class vgm_skillTrees {
                 class slam: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SLAM";
                     description = "$STR_VGM_SKILLS_SKILL_SLAM_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -1334,7 +1369,7 @@ class vgm_skillTrees {
                 class eyes_down: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_EYES_DOWN";
                     description = "$STR_VGM_SKILLS_SKILL_EYES_DOWN_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -1344,7 +1379,7 @@ class vgm_skillTrees {
                 class rocketman_1: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ROCKETMAN_1";
                     description = "$STR_VGM_SKILLS_SKILL_ROCKETMAN_1_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -1354,7 +1389,7 @@ class vgm_skillTrees {
                 class lightfooted: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_LIGHTFOOTED";
                     description = "$STR_VGM_SKILLS_SKILL_LIGHTFOOTED_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
                     // TODO - Implementation
@@ -1364,7 +1399,7 @@ class vgm_skillTrees {
                 class toepopper: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_TOEPOPPER";
                     description = "$STR_VGM_SKILLS_SKILL_TOEPOPPER_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
                     // TODO - Implementation
@@ -1376,7 +1411,7 @@ class vgm_skillTrees {
                 class slam_time_2: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SLAM_TIME_2";
                     description = "$STR_VGM_SKILLS_SKILL_SLAM_TIME_2_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
                     // TODO - Implementation
@@ -1388,7 +1423,7 @@ class vgm_skillTrees {
                 class lethal_gifts: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_LETHAL_GIFTS";
                     description = "$STR_VGM_SKILLS_SKILL_LETHAL_GIFTS_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -1401,7 +1436,7 @@ class vgm_skillTrees {
                 class gone_native: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_GONE_NATIVE";
                     description = "$STR_VGM_SKILLS_SKILL_GONE_NATIVE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -1411,7 +1446,7 @@ class vgm_skillTrees {
                 class rocketman_2: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ROCKETMAN_2";
                     description = "$STR_VGM_SKILLS_SKILL_ROCKETMAN_2_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -1421,7 +1456,7 @@ class vgm_skillTrees {
                 class jungle_eyes: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_JUNGLE_EYES";
                     description = "$STR_VGM_SKILLS_SKILL_JUNGLE_EYES_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
                     // TODO - Implementation
@@ -1431,7 +1466,7 @@ class vgm_skillTrees {
                 class slam_time: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SLAM_TIME";
                     description = "$STR_VGM_SKILLS_SKILL_SLAM_TIME_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 5;
 
                     // TODO - Implementation
@@ -1443,7 +1478,7 @@ class vgm_skillTrees {
                 class rocketman_3: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_ROCKETMAN_3";
                     description = "$STR_VGM_SKILLS_SKILL_ROCKETMAN_3_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
                     // TODO - Implementation
@@ -1456,7 +1491,7 @@ class vgm_skillTrees {
                 class dynamite: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_DYNAMITE";
                     description = "$STR_VGM_SKILLS_SKILL_DYNAMITE_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -1468,7 +1503,7 @@ class vgm_skillTrees {
                 class blackjack: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_BLACKJACK";
                     description = "$STR_VGM_SKILLS_SKILL_BLACKJACK_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -1478,7 +1513,7 @@ class vgm_skillTrees {
                 class fuzemaster: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_FUZEMASTER";
                     description = "$STR_VGM_SKILLS_SKILL_FUZEMASTER_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -1488,7 +1523,7 @@ class vgm_skillTrees {
                 class deep_placement: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_DEEP_PLACEMENT";
                     description = "$STR_VGM_SKILLS_SKILL_DEEP_PLACEMENT_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 4;
 
                     // TODO - Implementation
@@ -1500,7 +1535,7 @@ class vgm_skillTrees {
                 class clean_sweep: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_CLEAN_SWEEP";
                     description = "$STR_VGM_SKILLS_SKILL_CLEAN_SWEEP_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 0;
 
                     // TODO - Implementation
@@ -1513,7 +1548,7 @@ class vgm_skillTrees {
                 class lethal_gifts_2: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_LETHAL_GIFTS_2";
                     description = "$STR_VGM_SKILLS_SKILL_LETHAL_GIFTS_2_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 1;
 
                     // TODO - Implementation
@@ -1526,7 +1561,7 @@ class vgm_skillTrees {
                 class heart_of_darkness: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_HEART_OF_DARKNESS";
                     description = "$STR_VGM_SKILLS_SKILL_HEART_OF_DARKNESS_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 2;
 
                     // TODO - Implementation
@@ -1536,7 +1571,7 @@ class vgm_skillTrees {
                 class saboteur: vgm_skillTemplate {
                     displayName = "$STR_VGM_SKILLS_SKILL_SABOTEUR";
                     description = "$STR_VGM_SKILLS_SKILL_SABOTEUR_DESC";
-                    conditionUnlock[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
+                    conditionsUnlockGlobal[] = { { "false", "STR_VGM_SKILLS_UI_DISABLED_SKILL" } };
                     column = 3;
 
                     // TODO - Implementation
@@ -1720,14 +1755,6 @@ class vgm_skillTrees {
                     codeApply = "[player, 'interact', 'skill_support_nimbleHands', -0.25, true] call vgm_c_fnc_coefficient_set";
                     codeUnapply = "[player, 'interact', 'skill_support_nimbleHands'] call vgm_c_fnc_coefficient_remove";
                 };
-
-                class shepherd: vgm_skillTemplate {
-                    displayName = "$STR_VGM_SKILLS_SKILL_SUPPORT_SHEPHERD";
-                    description = "$STR_VGM_SKILLS_SKILL_SUPPORT_SHEPHERD_DESC";
-
-                    codeApply = "true call vgm_c_fnc_skill_passives_support_shepherd";
-                    codeUnapply = "false call vgm_c_fnc_skill_passives_support_shepherd";
-                };
             };
 
             class tier_2 {
@@ -1789,16 +1816,6 @@ class vgm_skillTrees {
             };
 
             class tier_4 {
-                class getToTheLz: vgm_skillTemplate {
-                    displayName = "$STR_VGM_SKILLS_SKILL_SUPPORT_GET_TO_THE_LZ";
-                    description = "$STR_VGM_SKILLS_SKILL_SUPPORT_GET_TO_THE_LZ_DESC";
-
-                    codeActivate = "call vgm_c_fnc_skill_actives_support_getToTheLz";
-                    skillType = 2;
-                    cost = 2;
-                    cooldown = 480;
-                    duration = 30;
-                };
             };
         };
 

@@ -2,7 +2,7 @@
     File: fn_skills_parseTreeCfg.sqf
     Author:
     Date: 2023-01-15
-    Last Update: 2025-08-24
+    Last Update: 2026-04-01
     Public: Yes
 
     Description:
@@ -38,8 +38,7 @@ private _fnc_parseSkillTree = {
         ["displayName", getText (_cfgSkillTree >> "displayName")],
         ["icon", getText (_cfgSkillTree >> "icon")],
         ["description", getText (_cfgSkillTree >> "description")],
-        ["skills", []],
-        ["skillPointsMax", 0]
+        ["skills", []]
     ];
     private _cfgSkills = _cfgSkillTree >> "skills";
     {
@@ -56,29 +55,28 @@ private _fnc_parseSkillTree = {
                 ["column", getNumber (_x >> "column")],
                 ["icon", getText (_x >> "icon")],
                 ["isActive", getNumber (_x >> "skillType") > 0],
-                ["applyOnRespawn", getNumber (_x >> "applyOnRespawn") > 0],
                 ["cooldown", getNumber (_x >> "cooldown")],
                 ["duration", getNumber (_x >> "duration")],
                 ["cost", getNumber (_x >> "cost")],
-                ["conditionUnlock", getArray (_x >> "conditionUnlock") apply {
+                ["conditionsUnlockGlobal", getArray (_x >> "conditionsUnlockGlobal") apply {
                     _x params [["_code", "true"], ["_reason", ""]];
                     [ compileFinal _code, _reason ]
                 }],
                 ["conditionShow", compileFinal getText (_x >> "conditionShow")],
                 ["conditionActivate", compileFinal getText (_x >> "conditionActivate")],
+                ["applyOnRespawn", getNumber (_x >> "applyOnRespawn") > 0],
                 ["codeApply", compileFinal getText (_x >> "codeApply")],
                 ["codeUnapply", compileFinal getText (_x >> "codeUnapply")],
+                ["isGroupSkill", getText (_x >> "codeApplyGroup") isNotEqualTo "" || getText (_x >> "codeUnapplyGroup") isNotEqualTo ""],
+                ["applyOnRespawnGroup", getNumber (_x >> "applyOnRespawnGroup") > 0],
+                ["codeApplyGroup", compileFinal getText (_x >> "codeApplyGroup")],
+                ["codeUnapplyGroup", compileFinal getText (_x >> "codeUnapplyGroup")],
                 ["codeActivate", compileFinal getText (_x >> "codeActivate")],
+                ["codeActivateGroup", compileFinal getText (_x >> "codeActivateGroup")],
                 ["codeDeactivate", compileFinal getText (_x >> "codeDeactivate")],
                 ["codeUnableToActivate", compileFinal getText (_x >> "codeUnableToActivate")]
             ];
         };
-
-        private _skillPointsMax = _skillTree get "skillPointsMax";
-        {
-            _skillPointsMax = _skillPointsMax + (_x get "cost");
-        } forEach _skills;
-        _skillTree set ["skillPointsMax", _skillPointsMax];
 
         _skillTree get "skills" pushBack _skills;
     } forEach SKILL_TIERS;
